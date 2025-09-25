@@ -1,0 +1,14 @@
+{
+  "name": "mern-notes-backend-bun",
+  "scripts": {
+    "dev": "bun run --hot src/index.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.16.2",
+    "hono": "^4.9.8",
+    "prisma": "^6.16.2"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.22"
+  }
+}
