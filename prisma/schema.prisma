@@ -14,6 +14,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  OWNER
+  GENERAL
+}
+
 model Note {
   id          String   @id @map("_id") @default(cuid())
   title       String
@@ -22,7 +28,7 @@ model Note {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  userId String 
+  userId String
   user   User   @relation(fields: [userId], references: [id])
 
   @@map("notes")
@@ -33,12 +39,19 @@ model User {
   name          String
   email         String
   emailVerified Boolean   @default(false)
+  
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @default(now()) @updatedAt
   sessions      Session[]
   accounts      Account[]
   notes         Note[]
+
+  role       Role     @default(GENERAL)
+  banned     Boolean?  @default(false)
+  banReason  String?
+  banExpires DateTime?
+  isVerified Boolean  @default(false)
 
   @@unique([email])
   @@map("user")
@@ -52,8 +65,10 @@ model Session {
   updatedAt DateTime @updatedAt
   ipAddress String?
   userAgent String?
-  userId    String 
+  userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  impersonatedBy String?
 
   @@unique([token])
   @@map("session")
@@ -62,7 +77,7 @@ model Session {
 model Account {
   id                    String    @id @map("_id") @default(cuid())
   providerId            String
-  userId                String 
+  userId                String
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?

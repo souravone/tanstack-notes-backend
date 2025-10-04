@@ -1,13 +1,15 @@
 import { betterAuth } from "better-auth";
+import { createAuthClient } from "better-auth/client";
+import { adminClient } from "better-auth/client/plugins";
+import { admin } from "better-auth/plugins";
 import { openAPI } from "better-auth/plugins";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-// If your Prisma file is located elsewhere, you can change the path
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 export const auth = betterAuth({
-  plugins: [openAPI()],
+  plugins: [openAPI(), admin()],
   database: prismaAdapter(prisma, {
     provider: "mongodb",
   }),
@@ -19,4 +21,8 @@ export const auth = betterAuth({
     minPasswordLength: 6,
     autoSignIn: true,
   },
+});
+
+export const authClient = createAuthClient({
+  plugins: [adminClient()],
 });
